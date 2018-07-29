@@ -5,8 +5,9 @@ PVector shaderMousePos = new PVector(0,0);
 PVector shaderMouseClick = new PVector(0,0);
 
 void setupShaders() {
-  shader = loadShader("example.glsl"); 
+  shader = loadShader("hsb.glsl"); 
   shaderSetSize(shader);
+  shader.set("hsbc", 1.0, random(1.0), 1.0, 1.0);
 }
 
 void updateShaders() {

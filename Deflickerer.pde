@@ -9,6 +9,7 @@ void draw() {
   
   targetImg.beginDraw();
   //targetImg.image(exampleProcess(img),0,0);
+  targetImg.image(img, 0, 0);
   targetImg.filter(shader);
   targetImg.endDraw();
   
