@@ -19,7 +19,7 @@ void draw() {
   
   switch(appState) {
     case BRIGHTNESS:
-      float avg = avgBrightness(img);
+      float avg = avgBrightness(img, 100);
       println("brightness of image " + (counter+1) + " is " + avg);
       brightnessList.add(avg);
       counter++;
@@ -40,7 +40,7 @@ void draw() {
       //targetImg.image(exampleProcess(img),0,0);
       targetImg.image(img, 0, 0);
       
-      float b = 0.5 + (((bAvg - brightnessList.get(counter)) / bAvg) * 0.5);
+      float b = 0.5 * (brightnessList.get(counter) / bAvg);
       println("brightness adjust " + b);
       shader.set("hsbc", 0.0, b, 0.5, 0.5);
       
@@ -51,13 +51,24 @@ void draw() {
   }
 }
 
-float avgBrightness(PImage _img) {
+float avgBrightness(PImage _img, int dim) {
+  PGraphics buffer = createGraphics(dim, dim, P2D);
+  buffer.beginDraw();
+  buffer.image(img, 0, 0, dim, dim);
+  buffer.endDraw();
   float avg = 0;
-  for (int i=0; i<_img.pixels.length; i++) {
-    color c = _img.pixels[i];
-    avg += ((red(c)/255.0) + (green(c)/255.0) + (blue(c)/255.0))/3.0;
+  buffer.loadPixels();
+  for (int i=0; i<buffer.pixels.length; i++) {
+    //avg += brightness(buffer.pixels[i]);
+    avg += getPerceivedBrightness(buffer.pixels[i]);
   }
-  return avg / (float) _img.pixels.length;
+  float l = dim * dim;
+  return avg / l / 255.0;
+}
+
+float getPerceivedBrightness(color c) {
+  // https://stackoverflow.com/questions/3490727/what-are-some-methods-to-analyze-image-brightness-using-python
+  return sqrt(0.241*(pow(red(c), 2)) + 0.691*(pow(green(c), 2)) + 0.068*(pow(blue(c), 2)));
 }
 
 PImage exampleProcess(PImage _img) {
