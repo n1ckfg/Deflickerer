@@ -1,5 +1,5 @@
 ArrayList<Float> brightnessList;
-float brightnessAvg = 0;
+float bAvg = 0;
 AppState appState;
 Settings settings;
 
@@ -20,15 +20,15 @@ void draw() {
   switch(appState) {
     case BRIGHTNESS:
       float avg = avgBrightness(img);
-      println("brightness of image " + counter + " is " + avg);
+      println("brightness of image " + (counter+1) + " is " + avg);
       brightnessList.add(avg);
       counter++;
       if (counter > imgNames.size()-1) {
         for (int i=0; i<brightnessList.size(); i++) {
-          brightnessAvg += brightnessList.get(i);
+          bAvg += brightnessList.get(i);
         }
-        brightnessAvg /= (float) brightnessList.size();
-        println("average brightness of scene is " + brightnessAvg);
+        bAvg /= (float) brightnessList.size();
+        println("average brightness of scene is " + bAvg);
         counter = 0;
         appState = AppState.RENDERING;
       } else {
@@ -39,8 +39,11 @@ void draw() {
       targetImg.beginDraw();
       //targetImg.image(exampleProcess(img),0,0);
       targetImg.image(img, 0, 0);
-      float b = brightnessAvg / brightnessList.get(counter);
+      
+      float b = 0.5 + (((bAvg - brightnessList.get(counter)) / bAvg) * 0.5);
+      println("brightness adjust " + b);
       shader.set("hsbc", 0.0, b, 0.5, 0.5);
+      
       targetImg.filter(shader);
       targetImg.endDraw();
       fileLoop();
@@ -49,19 +52,12 @@ void draw() {
 }
 
 float avgBrightness(PImage _img) {
-  _img.loadPixels();
-  int step = 5;
-  float returns = 0;
-  float counter = 0;
-  PVector p = new PVector(0,0,0);
-  for (int i=0; i<_img.pixels.length; i += step) {
+  float avg = 0;
+  for (int i=0; i<_img.pixels.length; i++) {
     color c = _img.pixels[i];
-    PVector col = new PVector(red(c)/255.0, green(c)/255.0, blue(c)/255.0);
-    p.add(col);
-    counter++;
+    avg += ((red(c)/255.0) + (green(c)/255.0) + (blue(c)/255.0))/3.0;
   }
-  PVector avg = p.div(counter);
-  return (avg.x + avg.y + avg.z) / 3;  
+  return avg / (float) _img.pixels.length;
 }
 
 PImage exampleProcess(PImage _img) {
