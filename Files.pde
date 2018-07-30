@@ -127,7 +127,7 @@ void saveGraphics(PGraphics pg,boolean last){
 void nextImage(int _n){
   String imgFile = (String) imgNames.get(_n);
   img = loadImage(imgFile);
-  println("RENDERING frame " + (counter+1) + " of " + imgNames.size());
+  println(appState + " frame " + (counter+1) + " of " + imgNames.size());
 }
 
 String zeroPadding(int _val, int _maxVal){
@@ -145,7 +145,6 @@ void prepGraphics() {
 }
 
 void fileSetup() {
-  Settings settings = new Settings("settings.txt");
   loadFiles();
   nextImage(counter);
   if (updateScreen) surface.setSize(img.width, img.height);

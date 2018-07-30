@@ -5,9 +5,13 @@ PVector shaderMousePos = new PVector(0,0);
 PVector shaderMouseClick = new PVector(0,0);
 
 void setupShaders() {
-  shader = loadShader("hsb.glsl"); 
+  shader = loadShader("hsbc.glsl"); 
   shaderSetSize(shader);
-  shader.set("hsbc", 1.0, random(1.0), 1.0, 1.0);
+  float h = 0.0; // hue 0-1, default 0.0
+  float s = 1.0; // saturation 0-1, default 1.0
+  float b = 0.5; // brightness 0-1, default 0.5
+  float c = 0.5; // contrast 0-1, default 0.5
+  shader.set("hsbc", h, b, c, s);
 }
 
 void updateShaders() {
