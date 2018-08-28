@@ -19,7 +19,7 @@ void draw() {
   
   switch(appState) {
     case BRIGHTNESS:
-      float avg = avgBrightness(img, 100);
+      float avg = avgBrightness(img);
       println("brightness of image " + (counter+1) + " is " + avg);
       brightnessList.add(avg);
       counter++;
@@ -51,24 +51,19 @@ void draw() {
   }
 }
 
-float avgBrightness(PImage _img, int dim) {
-  PGraphics buffer = createGraphics(dim, dim, P2D);
-  buffer.beginDraw();
-  buffer.image(img, 0, 0, dim, dim);
-  buffer.endDraw();
+float avgBrightness(PImage _img) {
   float avg = 0;
-  buffer.loadPixels();
-  for (int i=0; i<buffer.pixels.length; i++) {
-    //avg += brightness(buffer.pixels[i]);
-    avg += getPerceivedBrightness(buffer.pixels[i]);
+  _img.loadPixels();
+  for (int i=0; i<_img.pixels.length; i++) {
+    avg += brightness(_img.pixels[i]);
   }
-  float l = dim * dim;
-  return avg / l / 255.0;
+  return avg / (float) _img.pixels.length;
 }
 
 float getPerceivedBrightness(color c) {
   // https://stackoverflow.com/questions/3490727/what-are-some-methods-to-analyze-image-brightness-using-python
-  return sqrt(0.241*(pow(red(c), 2)) + 0.691*(pow(green(c), 2)) + 0.068*(pow(blue(c), 2)));
+  // https://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
+  return (0.21 * red(c) + 0.72 * green(c) + 0.07 * blue(c)) / 255.0;
 }
 
 PImage exampleProcess(PImage _img) {
